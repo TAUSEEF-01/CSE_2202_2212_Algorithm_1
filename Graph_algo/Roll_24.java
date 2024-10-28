@@ -14,7 +14,7 @@ class Graph {
         vis = new boolean[n + 1];
     }
 
-    public void addEdge(int u, int v) {
+    public void edgeAdd(int u, int v) {
         adj[u].add(v);
     }
 
@@ -62,12 +62,12 @@ class Graph {
         }
     }
 
-    private void topologicalSortUtil(int v, Stack<Integer> stack) {
+    private void topologicalSortProcess(int v, Stack<Integer> stack) {
         vis[v] = true;
 
         for (int i : adj[v]) {
             if (!vis[i]) {
-                topologicalSortUtil(i, stack);
+                topologicalSortProcess(i, stack);
             }
         }
 
@@ -80,7 +80,7 @@ class Graph {
 
         for (int i = 0; i < n; i++) {
             if (!vis[i]) {
-                topologicalSortUtil(i, stack);
+                topologicalSortProcess(i, stack);
             }
         }
 
@@ -112,63 +112,63 @@ class Graph {
     }
 
     /* strongly connected components: */
-    void getOrder(int u, boolean visitedVertices[], Stack<Integer> stack) {
-        visitedVertices[u] = true;
+    void getVerticesOrder(int u, boolean visV[], Stack<Integer> stack) {
+        visV[u] = true;
 
         for (var v : adj[u]) {
-            if (!visitedVertices[v])
-                getOrder(v, visitedVertices, stack);
+            if (!visV[v])
+                getVerticesOrder(v, visV, stack);
         }
 
         stack.push(u);
     }
 
-    Graph transpose() {
+    Graph graphTranspose() {
         Graph g = new Graph(n);
 
         for (int i = 0; i <= n; i++) {
             for (var j : adj[i]) {
-                g.addEdge(j, i);
+                g.edgeAdd(j, i);
             }
         }
         return g;
     }
 
-    void dfsUtil(int i, boolean visitedVertices[]) {
-        visitedVertices[i] = true;
+    void dfsSCC(int i, boolean visV[]) {
+        visV[i] = true;
 
         System.out.print(i + " ");
         for (var j : adj[i]) {
-            if (visitedVertices[j] == false)
-                dfsUtil(j, visitedVertices);
+            if (visV[j] == false)
+                dfsSCC(j, visV);
         }
     }
 
-    void printSSC() {
+    void printStronglyConnectedComponent() {
         Stack<Integer> stack = new Stack<Integer>();
 
-        boolean visitedVertices[] = new boolean[n + 1];
+        boolean visV[] = new boolean[n + 1];
         for (int i = 0; i <= n; i++) {
-            visitedVertices[i] = false;
+            visV[i] = false;
         }
 
         for (int i = 0; i <= n; i++) {
-            if (visitedVertices[i] == false)
-                getOrder(i, visitedVertices, stack);
+            if (visV[i] == false)
+                getVerticesOrder(i, visV, stack);
         }
 
-        Graph g = transpose();
+        Graph g = graphTranspose();
         // g.displayGraph();
 
         for (int i = 0; i <= n; i++) {
-            visitedVertices[i] = false;
+            visV[i] = false;
         }
 
         while (!stack.empty()) {
             int s = (int) stack.pop();
 
-            if (!visitedVertices[s]) {
-                g.dfsUtil(s, visitedVertices);
+            if (!visV[s]) {
+                g.dfsSCC(s, visV);
                 System.out.println();
             }
         }
@@ -180,6 +180,16 @@ public class Roll_24 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         solve(sc);
+
+        // File myObj = new File("input.txt");
+       // Scanner sc;
+       // try {
+       //     sc = new Scanner(myObj);
+       //     solve(sc);
+       //     sc.close();
+       // } catch (FileNotFoundException e) {
+       //     e.printStackTrace();
+       // }
     }
 
     static void solve(Scanner sc) {
@@ -191,12 +201,12 @@ public class Roll_24 {
         for (int i = 0; i < e; i++) {
             int u = sc.nextInt();
             int v = sc.nextInt();
-            g.addEdge(u, v);
+            g.edgeAdd(u, v);
         }
 
         // g.displayGraph();
         // System.out.println();
-        g.printSSC();
+        g.printStronglyConnectedComponent();
 
         // System.out.println("BFS starting from node 5:");
         // g.bfs(5);
