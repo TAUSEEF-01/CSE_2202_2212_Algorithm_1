@@ -39,7 +39,7 @@ public class Dijkstra {
 
         int[] path = new int[n + 1];
         PriorityQueue<Pair> pq = new PriorityQueue<>(Comparator.comparingLong(o1 -> o1.second));
-        
+
         pq.add(new Pair(1, 0));
         dist[1] = 0;
 
@@ -54,7 +54,7 @@ public class Dijkstra {
                     path[u.first] = v.first;
                     pq.add(new Pair(u.first, dist[u.first]));
                 }
-            }       	
+            }
         }
 
         if (dist[n] == Long.MAX_VALUE) {

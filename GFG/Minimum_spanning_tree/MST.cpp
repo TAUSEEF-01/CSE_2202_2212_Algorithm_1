@@ -144,7 +144,6 @@ int main()
         }
 
         Graph obj;
-        // cout << obj.MST_prim(V, adj) << "\n";
         cout << obj.MST_kruskal(V, adj) << "\n";
     }
 
