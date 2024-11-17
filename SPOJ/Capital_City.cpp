@@ -273,71 +273,107 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
 const int sz = 1e5 + 7;
-int n, m;
-vector<pair<int, int>> g[sz];
+vi g[sz], gt[sz], store, color(sz);
+vb vis(sz, 0);
+int cnt;
 
-void dijkstra(int s, vi &parent)
+void dfs1(int u)
 {
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    vl dist(n + 1, inf);
-    dist[s] = 0;
-    parent[s] = s;
-    pq.push({0, s});
-
-    while (!pq.empty())
+    vis[u] = 1;
+    for (auto &v : g[u])
     {
-        int u = pq.top().second;
-        pq.pop();
-
-        for (auto &x : g[u])
-        {
-            int d = x.second;
-            int v = x.first;
-            if (dist[u] + d < dist[v])
-            {
-                dist[v] = dist[u] + d;
-                parent[v] = u;
-                pq.push({dist[v], v});
-            }
-        }
+        if (!vis[v])
+            dfs1(v);
     }
+    store.push_back(u);
 }
 
-void restorePath(int target, int start, vi &parent, vi &path)
+void dfs2(int u)
 {
-    for (int i = start; i != target; i = parent[i])
+    vis[u] = 1;
+    color[u] = cnt;
+    for (auto &v : gt[u])
     {
-        path.push_back(i);
+        if (!vis[v])
+            dfs2(v);
     }
-    path.push_back(target);
 }
 
 void solve()
 {
+    int n, m;
     cin >> n >> m;
 
     for (int i = 0; i < m; i++)
     {
-        int u, v, w;
-        cin >> u >> v >> w;
-        g[u].push_back({v, w});
-        g[v].push_back({u, w});
+        int u, v;
+        cin >> u >> v;
+        u--, v--;
+        g[u].push_back(v);
+        gt[v].push_back(u);
     }
 
-    vi parent(n + 1, -1);
-    dijkstra(1, parent);
-
-    if (parent[n] == -1)
+    for (int i = 0; i < n; i++)
     {
-        cout << -1 << endl;
-        return;
+        if (!vis[i])
+            dfs1(i);
     }
 
-    vi path;
-    restorePath(1, n, parent, path);
-    reverse(all(path));
+    cnt = 0;
+    vis.assign(sz, 0);
+    color.reserve(n);
 
-    output(path);
+    for (int i = n - 1; i >= 0; i--)
+    {
+        if (!vis[store[i]])
+        {
+            dfs2(store[i]);
+            cnt++;
+        }
+    }
+
+    vi outGoing(n, 0);
+    for (int i = 0; i < n; i++)
+    {
+        for (auto &v : g[i])
+        {
+            if (color[i] != color[v])
+            {
+                outGoing[color[i]]++;
+            }
+        }
+    }
+
+    int noScc = 0, sccNodeColor = -1;
+    for (int i = 0; i < cnt; i++)
+    {
+        if (outGoing[i] == 0)
+        {
+            noScc++;
+            sccNodeColor = i;
+        }
+    }
+
+    if (noScc == 1)
+    {
+        int noNodes = 0;
+        vi nodes;
+        for (int i = 0; i < n; i++)
+        {
+            if (color[i] == sccNodeColor)
+            {
+                noNodes++;
+                nodes.push_back(i + 1);
+            }
+        }
+
+        cout << noNodes << endl;
+        output(nodes);
+    }
+    else
+    {
+        cout << 0 << endl;
+    }
 }
 
 int main()
@@ -356,7 +392,7 @@ int main()
 
     for (int i = 1; i <= t; i++)
     {
-        // cout << "Case " << i << ": ";
+        // cout<<"Case "<<i<<": ";
         solve();
     }
 

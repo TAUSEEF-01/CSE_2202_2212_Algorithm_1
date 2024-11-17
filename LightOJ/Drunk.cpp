@@ -272,72 +272,89 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
-const int sz = 1e5 + 7;
-int n, m;
-vector<pair<int, int>> g[sz];
+const int sz = 1e5 + 10;
+vector<int> g[sz];
+vector<int> color(sz, 0);
+bool flag;
 
-void dijkstra(int s, vi &parent)
+void dfs(int u)
 {
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    vl dist(n + 1, inf);
-    dist[s] = 0;
-    parent[s] = s;
-    pq.push({0, s});
-
-    while (!pq.empty())
+    color[u] = 1;
+    for (int &v : g[u])
     {
-        int u = pq.top().second;
-        pq.pop();
-
-        for (auto &x : g[u])
+        // cout << u << ' ' << v << ' ' << color[v] << endl;
+        if (color[v] == 0)
         {
-            int d = x.second;
-            int v = x.first;
-            if (dist[u] + d < dist[v])
-            {
-                dist[v] = dist[u] + d;
-                parent[v] = u;
-                pq.push({dist[v], v});
-            }
+            dfs(v);
+        }
+        if (color[v] == 1)
+        {
+            // cout << u << ' ' << v << endl;
+            flag = false;
         }
     }
+    color[u] = 2;
 }
 
-void restorePath(int target, int start, vi &parent, vi &path)
+void reset(int n)
 {
-    for (int i = start; i != target; i = parent[i])
+    for (int i = 0; i <= n + 5; i++)
     {
-        path.push_back(i);
+        g[i].clear();
+        color[i] = 0;
     }
-    path.push_back(target);
 }
 
 void solve()
 {
-    cin >> n >> m;
+    int m;
+    cin >> m;
 
+    map<string, int> mp;
+    int cnt = 0;
     for (int i = 0; i < m; i++)
     {
-        int u, v, w;
-        cin >> u >> v >> w;
-        g[u].push_back({v, w});
-        g[v].push_back({u, w});
+        string a, b;
+        cin >> a >> b;
+        if (mp[a] == 0)
+        {
+            cnt++;
+            mp[a] = cnt;
+        }
+        if (mp[b] == 0)
+        {
+            cnt++;
+            mp[b] = cnt;
+        }
+        int u = mp[a], v = mp[b];
+        g[u].pb(v);
     }
 
-    vi parent(n + 1, -1);
-    dijkstra(1, parent);
+    // for(int i=1; i<=cnt; i++)
+    // {
+    //     cout << i << ": ";
+    //     for(auto &v: g[i])
+    //     {
+    //         cout << v << ' ';
+    //     }
+    //     cout << endl;
+    // }
 
-    if (parent[n] == -1)
+    flag = true;
+    for (int i = 0; i <= cnt; i++)
     {
-        cout << -1 << endl;
-        return;
+        if (color[i] == 0)
+        {
+            dfs(i);
+        }
     }
 
-    vi path;
-    restorePath(1, n, parent, path);
-    reverse(all(path));
+    if (flag)
+        cout << "Yes\n";
+    else
+        cout << "No\n";
 
-    output(path);
+    reset(m);
 }
 
 int main()
@@ -352,11 +369,11 @@ int main()
     // #endif
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
-        // cout << "Case " << i << ": ";
+        cout << "Case " << i << ": ";
         solve();
     }
 
