@@ -1,29 +1,3 @@
-// #include <stdio.h>
-
-// #define i64 unsigned long long
-
-// i64 dp[66][33];
-
-// i64 nCr(int n, int r)
-// {
-//     if(n==r) return dp[n][r] = 1;
-//     if(r==0) return dp[n][r] = 1;
-//     if(r==1) return dp[n][r] = (i64)n;
-//     if(dp[n][r]) return dp[n][r];
-//     return dp[n][r] = nCr(n-1,r) + nCr(n-1,r-1);
-// }
-
-// int main()
-// {
-//     int n, r;
-//     while(scanf("%d %d",&n,&r)==2)
-//     {
-//         r = (r<n-r)? r : n-r;
-//         printf("%llu\n",nCr(n,r));
-//     }
-//     return 0;
-// }
-
 /*
 I am THE_BEST_no_1
 
@@ -298,14 +272,50 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
-void solve()
+void solve() // tabulation format
 {
-    loop(i, 1, 101)
+    string a, b;
+    cin >> a >> b;
+
+    int n = a.size(), m = b.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+    for (int i = 1; i <= n; i++)
     {
-        if ((i -1) % 10 == 0)
-            cout << endl;
-        cout << i << ' ';
+        for (int j = 1; j <= m; j++)
+        {
+            if (a[i - 1] == b[j - 1])
+            {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            }
+            else
+            {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
     }
+
+    string ans;
+    int i = n, j = m;
+    while (i > 0 && j > 0)
+    {
+        if (a[i - 1] == b[j - 1])
+        {
+            ans.push_back(a[i - 1]);
+            i--, j--;
+        }
+        else if (dp[i - 1][j] > dp[i][j - 1])
+        {
+            i--;
+        }
+        else
+        {
+            j--;
+        }
+    }
+
+    reverse(all(ans));
+    cout << ans << endl;
 }
 
 int main()

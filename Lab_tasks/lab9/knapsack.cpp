@@ -276,8 +276,6 @@ int knapsack(int i, vi &weight, vi &value, int capacity, vector<vector<int>> &dp
 {
     if (i < 0)
         return 0;
-
-  
   
     if (capacity == 0)
         return 0;

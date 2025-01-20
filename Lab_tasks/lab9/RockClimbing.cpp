@@ -1,29 +1,3 @@
-// #include <stdio.h>
-
-// #define i64 unsigned long long
-
-// i64 dp[66][33];
-
-// i64 nCr(int n, int r)
-// {
-//     if(n==r) return dp[n][r] = 1;
-//     if(r==0) return dp[n][r] = 1;
-//     if(r==1) return dp[n][r] = (i64)n;
-//     if(dp[n][r]) return dp[n][r];
-//     return dp[n][r] = nCr(n-1,r) + nCr(n-1,r-1);
-// }
-
-// int main()
-// {
-//     int n, r;
-//     while(scanf("%d %d",&n,&r)==2)
-//     {
-//         r = (r<n-r)? r : n-r;
-//         printf("%llu\n",nCr(n,r));
-//     }
-//     return 0;
-// }
-
 /*
 I am THE_BEST_no_1
 
@@ -298,14 +272,111 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
+// int climbRock(vector<vector<int>> &a, vector<vector<int>> &dp, int n, int i, int j)
+// {
+//     if (i == n || j == n || j < 0 || i < 0)
+//         return 0;
+
+//     if (dp[i][j] != -1)
+//         return dp[i][j];
+
+//     return dp[i][j] = max({climbRock(a, dp, n, i + 1, j - 1), climbRock(a, dp, n, i + 1, j), climbRock(a, dp, n, i + 1, j + 1)}) + a[i][j];
+// }
+
+// void solve()
+// {
+//     int n;
+//     cin >> n;
+
+//     vector<vector<int>> a(n, vector<int>(n, 0)), dp(n, vector<int>(n, -1));
+//     for (int i = 0; i <= n; i++)
+//     {
+//         for (int j = 0; j < n; j++)
+//         {
+//             cin >> a[i][j];
+//         }
+//     }
+
+//     int ans = 0;
+//     for (int i = 0; i < n; i++)
+//     {
+//         ans = max(ans, climbRock(a, dp, n, 0, i));
+//     }
+
+//     cout << ans << endl;
+// }
+
+// int rockClimbing(vector<vector<int>>& wall) {
+//     int rows = wall.size();
+//     int cols = wall[0].size();
+
+//     // Create a DP table and initialize it with the last row of the wall
+//     vector<vector<int>> dp(rows, vector<int>(cols, 0));
+//     for (int j = 0; j < cols; j++) {
+//         dp[rows - 1][j] = wall[rows - 1][j];
+//     }
+
+//     // Fill the DP table from bottom to top
+//     for (int i = rows - 2; i >= 0; i--) {
+//         for (int j = 0; j < cols; j++) {
+//             // Calculate max energy from possible moves
+//             int maxFromBelow = dp[i + 1][j]; // straight up
+//             int maxFromLeft = (j > 0) ? dp[i + 1][j - 1] : 0; // diagonal left
+//             int maxFromRight = (j < cols - 1) ? dp[i + 1][j + 1] : 0; // diagonal right
+
+//             dp[i][j] = wall[i][j] + max({maxFromBelow, maxFromLeft, maxFromRight});
+//         }
+//     }
+
+//     // Find the maximum energy in the first row
+//     return *max_element(dp[0].begin(), dp[0].end());
+// }
+
+int rockClimbing(vector<vector<int>> &wall)
+{
+    int row = wall.size();
+    int col = wall[0].size();
+
+    vector<vector<int>> dp(row, vector<int>(col, 0));
+    for (int i = 0; i < col; i++)
+    {
+        dp[row - 1][i] = wall[row - 1][i];
+    }
+
+    for (int i = row - 2; i >= 0; i--)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            /*
+                               dp[i][j]                             <-- row i (higher level)
+                        /         |         \
+            dp[i + 1][j - 1]  dp[i + 1][j]   dp[i + 1][j + 1]       <-- row i + 1
+            */
+            int up = dp[i + 1][j];
+            int left = (j > 0) ? dp[i + 1][j - 1] : 0;
+            int right = (j < col - 1) ? dp[i + 1][j + 1] : 0;
+            dp[i][j] = max({up, left, right}) + wall[i][j];
+        }
+    }
+
+    return *max_element(all(dp[0]));
+}
+
 void solve()
 {
-    loop(i, 1, 101)
+    int n;
+    cin >> n;
+
+    vector<vector<int>> wall(n, vector<int>(n));
+    for (int i = 0; i < n; i++)
     {
-        if ((i -1) % 10 == 0)
-            cout << endl;
-        cout << i << ' ';
+        for (int j = 0; j < n; j++)
+        {
+            cin >> wall[i][j];
+        }
     }
+
+    cout << rockClimbing(wall) << endl;
 }
 
 int main()
