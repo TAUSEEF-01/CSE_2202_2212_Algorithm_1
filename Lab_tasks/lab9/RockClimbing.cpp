@@ -332,6 +332,80 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 //     return *max_element(dp[0].begin(), dp[0].end());
 // }
 
+void rockClimbingPath(vector<vector<int>> &wall)
+{
+    int row = wall.size();
+    int col = wall[0].size();
+
+    vector<vector<int>> dp(row, vector<int>(col, 0));
+    for (int i = 0; i < col; i++)
+    {
+        dp[row - 1][i] = wall[row - 1][i];
+    }
+
+    for (int i = row - 2; i >= 0; i--)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            /*
+                               dp[i][j]                             <-- row i (higher level)
+                        /         |         \
+            dp[i + 1][j - 1]  dp[i + 1][j]   dp[i + 1][j + 1]       <-- row i + 1
+            */
+            int up = dp[i + 1][j];
+            int left = (j > 0) ? dp[i + 1][j - 1] : 0;
+            int right = (j < col - 1) ? dp[i + 1][j + 1] : 0;
+            dp[i][j] = max({up, left, right}) + wall[i][j];
+        }
+    }
+
+    int max_pos = 0, val = 0;
+    for (int i = 0; i < col; i++)
+    {
+        if (val < dp[0][i])
+        {
+            val = dp[0][i];
+            max_pos = i;
+        }
+    }
+
+    vector<int> path;
+    int i = 0, j = max_pos;
+    while (i < row)
+    {
+        path.push_back(wall[i][j]);
+        if (i == row - 1)
+            break;
+
+        int v[3];
+        v[0] = ((j > 0) ? dp[i + 1][j - 1] : 0);
+        v[1] = dp[i + 1][j];
+        v[2] = ((j < col - 1) ? dp[i + 1][j + 1] : 0);
+
+        int pos = -1, mx = 0;
+        for (int k = 0; k < 3; k++)
+        {
+            if (mx < v[k])
+            {
+                mx = v[k];
+                pos = k;
+            }
+        }
+
+        if (pos == 0)
+            j--;
+        else if (pos == 2)
+            j++;
+        i++;
+    }
+
+    for (int i = 0; i < row; i++)
+    {
+        cout << path[i] << ' ';
+    }
+    cout << endl;
+}
+
 int rockClimbing(vector<vector<int>> &wall)
 {
     int row = wall.size();
@@ -376,7 +450,8 @@ void solve()
         }
     }
 
-    cout << rockClimbing(wall) << endl;
+    // cout << rockClimbing(wall) << endl;
+    rockClimbingPath(wall);
 }
 
 int main()

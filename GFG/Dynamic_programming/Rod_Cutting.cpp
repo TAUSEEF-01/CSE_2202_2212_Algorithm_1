@@ -77,7 +77,7 @@ int main()
 
     for (int i = 0; i < t; i++)
     {
-        answer();
+        solve();
     }
 
     return 0;
