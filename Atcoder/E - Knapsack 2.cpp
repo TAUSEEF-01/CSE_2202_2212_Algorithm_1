@@ -272,46 +272,44 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
-int knapsack(int i, vi &weight, vi &value, int capacity, vector<vector<int>> &dp)
+vector<vector<ll>> dp(105, vector<ll>(100005, -1));
+ll knapsack(vector<ll> &w, vector<ll> &v, int i, int value)
 {
+    if (value == 0)
+        return 0;
+
     if (i < 0)
-        return 0;
-  
-    if (capacity == 0)
-        return 0;
+        return 1e15;
 
-    if (dp[i][capacity] != -1)
-        return dp[i][capacity];
+    if (dp[i][value] != -1)
+        return dp[i][value];
 
-    int v1 = 0, v2 = 0;
-    if (capacity - weight[i] >= 0)
-        v1 = knapsack(i - 1, weight, value, capacity - weight[i], dp) + value[i];
-    v2 = knapsack(i - 1, weight, value, capacity, dp);
+    ll val = knapsack(w, v, i - 1, value);
+    if (value - v[i] >= 0)
+        val = min(val, knapsack(w, v, i - 1, value - v[i]) + w[i]);
 
-    return dp[i][capacity] = max(v1, v2);
+    return dp[i][value] = val;
 }
-
 
 void solve()
 {
-    int n;
-    cin >> n;
+    ll n, w;
+    cin >> n >> w;
 
-    vi weight(n), value(n);
-    loop(i, 0, n)
+    vector<ll> weight(n), value(n);
+    for (int i = 0; i < n; i++)
     {
-        cin >> weight[i];
-    }
-    loop(i, 0, n)
-    {
-        cin >> value[i];
+        cin >> weight[i] >> value[i];
     }
 
-    int capacity;
-    cin >> capacity;
-
-    vector<vector<int>> dp(100, vector<int>(100, -1));
-    cout << knapsack(n - 1, weight, value, capacity, dp) << endl;
+    for (int val = 100000; val >= 0; val--)
+    {
+        if (knapsack(weight, value, n - 1, val) <= w)
+        {
+            cout << val << endl;
+            return;
+        }
+    }
 }
 
 int main()

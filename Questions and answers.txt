@@ -1,0 +1,25 @@
+#### Here are situations where DP fails or is not suitable:
+
+1. Overlapping Subproblems are Absent
+DP relies on the problem having overlapping subproblems. If there are no such subproblems, memoization or tabulation won't save time. i.e--> Finding the Nth Prime Number
+
+2. state space is too large
+When the state space is too large, DP becomes infeasible due to high time or space complexity, even if the problem theoretically has overlapping subproblems and optimal substructure. i.e--> Game Theory Problems with Complex States:
+E.g., solving chess or Go using DP.
+
+
+
+
+
+#### Polynomial Dynamic Programming (DP) refers to dynamic programming problems that can be solved in polynomial time, i.e., their time complexity is of the form  O(n ^ k)  where k is a constant and n is the input size.
+
+Examples of Polynomial DP Problems:
+1. Longest Common Subsequence (LCS) --> Time: O(2 ^ min(m, n)); Space: O(min(m, n))
+2. Knapsack Problem (0/1)
+3. Floyd-Warshall Algorithm
+
+
+
+#### Applications of Divide and Conquer
+1. Merge Sort
+2. Binary Search

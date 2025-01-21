@@ -272,46 +272,85 @@ bool comparator(pair<ll, ll> a, pair<ll, ll> b) // sort(vp.begin(), vp.end(), co
 
 // vector<vector<int>> a(n, vector<int>(n, 0));
 
-int knapsack(int i, vi &weight, vi &value, int capacity, vector<vector<int>> &dp)
+// vector<vector<ll>> dp(105, vector<ll>(100005, -1));
+// ll knapsack(vector<ll> &w, vector<ll> &v, int i, int weight) // complexity --> time: n * w; space: n * w
+// {
+//     if (i < 0)
+//         return 0;
+
+//     if (weight == 0)
+//         return 0;
+
+//     if (dp[i][weight] != -1)
+//         return dp[i][weight];
+
+//     ll cost = ((weight - w[i] >= 0) ? (v[i] + knapsack(w, v, i - 1, weight - w[i])) : 0);
+//     return dp[i][weight] = max(knapsack(w, v, i - 1, weight), cost);
+// }
+
+
+
+ll knapSack(ll W, vector<ll> &wt, vector<ll> &val) // tabulation format --> bottom up
 {
-    if (i < 0)
-        return 0;
-  
-    if (capacity == 0)
-        return 0;
+    int n = wt.size();
+    vector<vector<ll>> dp(n + 1, vector<ll>(W + 1));
 
-    if (dp[i][capacity] != -1)
-        return dp[i][capacity];
+    // Build table dp[][] in bottom-up manner
+    for (int i = 0; i <= n; i++)
+    {
+        for (int w = 0; w <= W; w++)
+        {
+            if (i == 0 || w == 0)
+                dp[i][w] = 0;
 
-    int v1 = 0, v2 = 0;
-    if (capacity - weight[i] >= 0)
-        v1 = knapsack(i - 1, weight, value, capacity - weight[i], dp) + value[i];
-    v2 = knapsack(i - 1, weight, value, capacity, dp);
+            else if (wt[i - 1] <= w)
+                dp[i][w] = max(val[i - 1] + dp[i - 1][w - wt[i - 1]], dp[i - 1][w]);
 
-    return dp[i][capacity] = max(v1, v2);
+            else
+                dp[i][w] = dp[i - 1][w];
+        }
+    }
+    return dp[n][W];
 }
 
 
+// ll knapSackSpace(ll W, vector<ll> &wt, vector<ll> &val)
+// {
+//     int n = wt.size();
+//     vector<ll> curr(W + 1, 0), prev(W + 1, 0); // space optimization
+//     for (int i = 0; i <= n; i++)
+//     {
+//         for (int w = 0; w <= W; w++)
+//         {
+//             if (i == 0 || w == 0)
+//                 curr[w] = 0;
+
+//             else if (wt[i - 1] <= w)
+//                 curr[w] = max(val[i - 1] + prev[w - wt[i - 1]], curr[w]);
+
+//             else
+//                 curr[w] = prev[w];
+//         }
+//         prev = curr;
+//     }
+
+//     return curr[W];
+// }
+
 void solve()
 {
-    int n;
-    cin >> n;
+    ll n, W;
+    cin >> n >> W;
 
-    vi weight(n), value(n);
-    loop(i, 0, n)
+    vector<ll> wt(n), val(n);
+    for (int i = 0; i < n; i++)
     {
-        cin >> weight[i];
-    }
-    loop(i, 0, n)
-    {
-        cin >> value[i];
+        cin >> wt[i] >> val[i];
     }
 
-    int capacity;
-    cin >> capacity;
-
-    vector<vector<int>> dp(100, vector<int>(100, -1));
-    cout << knapsack(n - 1, weight, value, capacity, dp) << endl;
+    // cout << knapsack(weight, value, n - 1, w) << endl;
+    cout << knapSack(W, wt, val) << endl;
+    // cout << knapSackSpace(W, wt, val) << endl;
 }
 
 int main()
