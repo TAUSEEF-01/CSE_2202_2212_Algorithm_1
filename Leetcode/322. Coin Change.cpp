@@ -2,7 +2,7 @@
 using namespace std;
 #define ll long long
 
-ll helper(vector<int> &coins, vector<ll> &dp, int amount, int n) // complexity --> time: amount; space: amount
+ll helper(vector<int> &coins, vector<ll> &dp, int amount, int n) // complexity --> time: amount * n; space: amount
 {
     if (amount == 0)
         return 0;

@@ -35,7 +35,7 @@ using namespace std;
 // }
 
 
-int rodCutting(vector<int> &a, vector<int> &dp, int len_left) // complexity --> time: n; space: n
+int rodCutting(vector<int> &a, vector<int> &dp, int len_left) // complexity --> time: n * n; space: n
 {
     if (len_left == 0)
         return 0;
