@@ -2,69 +2,98 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 // } Driver Code Ends
-class Solution {
-  public:
-    // Function to find sum of weights of edges of the Minimum Spanning Tree.
-    int spanningTree(int V, vector<vector<int>> adj[]) {
-            // code here
-            using pr = pair<int, int>;
-            priority_queue<pr, vector<pr>, greater<pr>> pq;
+class Solution
+{
+public:
+    int f(vector<int> &val, vector<int> &wt, int i, int t, vector<vector<int>> &dp)
+    {
+        if (i < 0)
+            return 0;
 
-            vector<bool> vis(V, false);
-            pq.push({0, 0});
+        if (t == 0)
+            return 0;
 
-            int sum  = 0;
-            while(!pq.empty())
+        if (dp[i][t] != -1)
+            return dp[i][t];
+
+        int v = f(val, wt, i - 1, t, dp);
+
+        if (t - wt[i] >= 0)
+            v = max(v, f(val, wt, i - 1, t - wt[i], dp) + val[i]);
+
+        return dp[i][t] = v;
+    }
+
+    // Function to return max value that can be put in knapsack of capacity.
+    int knapSack(int capacity, vector<int> &val, vector<int> &wt)
+    {
+        // code here
+        vector<vector<int>> dp(val.size() + 1, vector<int>(capacity + 1, 0));
+        // return f(val, wt, val.size() - 1, capacity, dp);
+        
+        int n = val.size();
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 0; j <= capacity; j++)
             {
-                int w = pq.top().first;
-                int v = pq.top().second;
+                int v = dp[i - 1][j];
 
-                pq.pop();
+                if (j - wt[i - 1] >= 0)
+                    v = max(v, dp[i - 1][j - wt[i - 1]] + val[i - 1]);
 
-                if(vis[v]) 
-                    continue;
-                
-                vis[v] = true;
-                sum += w;
-                for(auto &x: adj[v])
-                {
-                    if(!vis[x[0]])
-                    pq.push({x[1], x[0]});
-                }
+                dp[i][j] = v;
             }
+        }
 
-            return sum;
+        return dp[n][capacity];
     }
 };
 
 //{ Driver Code Starts.
 
-int main() {
-    int t = 1;
-    // cin >> t;
-    while (t--) {
-        int V, E;
-        cin >> V >> E;
-        vector<vector<int>> adj[V];
-        int i = 0;
-        while (i++ < E) {
-            int u, v, w;
-            cin >> u >> v >> w;
-            vector<int> t1, t2;
-            t1.push_back(v);
-            t1.push_back(w);
-            adj[u].push_back(t1);
-            t2.push_back(u);
-            t2.push_back(w);
-            adj[v].push_back(t2);
+int main()
+{
+    // Taking total test cases
+    int testCases = 1;
+    // cin >> testCases;
+    cin.ignore();
+    while (testCases--)
+    {
+        // Reading number of items and capacity
+        int numberOfItems, capacity;
+        vector<int> weights, values;
+        string input;
+        int number;
+
+        // Read capacity and number of items
+        getline(cin, input);
+        stringstream ss(input);
+        ss >> capacity;      // The first number is the capacity
+        ss >> numberOfItems; // The second number is the number of items
+
+        // Read values
+        getline(cin, input);
+        ss.clear();
+        ss.str(input);
+        while (ss >> number)
+        {
+            values.push_back(number);
         }
 
-        Solution obj;
-        cout << obj.spanningTree(V, adj) << "\n";
-    }
+        // Read weights
+        getline(cin, input);
+        ss.clear();
+        ss.str(input);
+        while (ss >> number)
+        {
+            weights.push_back(number);
+        }
 
+        Solution solution;
+        cout << solution.knapSack(capacity, values, weights) << endl;
+        // cout << "~" << endl;
+    }
     return 0;
 }
 

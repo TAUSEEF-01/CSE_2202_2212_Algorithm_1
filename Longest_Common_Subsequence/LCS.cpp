@@ -296,28 +296,28 @@ int LCS(string &a, string &b, int i, int j, int n, int m) // ---> bottom up
     return dp[i][j] = max(v1, v2);
 }
 
-// int LCS(string &a, string &b, int i, int j, int n, int m) // ---> top down
-// {
-//     if (i < 0)
-//         return 0;
+int LCS(string &a, string &b, int i, int j, int n, int m) // ---> top down
+{
+    if (i < 0)
+        return 0;
 
-//     if (j < 0)
-//         return 0;
+    if (j < 0)
+        return 0;
 
-//     if (dp[i][j] != -1)
-//         return dp[i][j];
+    if (dp[i][j] != -1)
+        return dp[i][j];
 
-//     int v1 = 0, v2 = 0;
-//     if (a[i] == b[j])
-//     {
-//         return dp[i][j] = LCS(a, b, i - 1, j - 1, n, m) + 1;
-//     }
+    int v1 = 0, v2 = 0;
+    if (a[i] == b[j])
+    {
+        return dp[i][j] = LCS(a, b, i - 1, j - 1, n, m) + 1;
+    }
 
-//     v1 = LCS(a, b, i - 1, j, n, m);
-//     v2 = LCS(a, b, i, j - 1, n, m);
+    v1 = LCS(a, b, i - 1, j, n, m);
+    v2 = LCS(a, b, i, j - 1, n, m);
 
-//     return dp[i][j] = max(v1, v2);
-// }
+    return dp[i][j] = max(v1, v2);
+}
 
 void solve()
 {
